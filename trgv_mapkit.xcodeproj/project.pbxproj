@@ -28,6 +28,8 @@
 		3054655F1C183C1800562292 /* ZLTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 305465521C183C1800562292 /* ZLTestViewController.xib */; };
 		3081145D1C1B4576005B028C /* UIView+ZLFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 3081145C1C1B4576005B028C /* UIView+ZLFrame.m */; };
 		9C050DB41D2D5FE300D7240A /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C050DB31D2D5FE300D7240A /* MapKit.framework */; };
+		9CFCC7201D75FF370051B4FA /* GeoJSONSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CFCC71F1D75FF370051B4FA /* GeoJSONSerialization.m */; };
+		9CFCC7221D7602930051B4FA /* map.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 9CFCC7211D7602930051B4FA /* map.geojson */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,6 +69,9 @@
 		3081145B1C1B4576005B028C /* UIView+ZLFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+ZLFrame.h"; sourceTree = "<group>"; };
 		3081145C1C1B4576005B028C /* UIView+ZLFrame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+ZLFrame.m"; sourceTree = "<group>"; };
 		9C050DB31D2D5FE300D7240A /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		9CFCC71D1D75FE5E0051B4FA /* GeoJSONSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoJSONSerialization.h; sourceTree = "<group>"; };
+		9CFCC71F1D75FF370051B4FA /* GeoJSONSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoJSONSerialization.m; sourceTree = "<group>"; };
+		9CFCC7211D7602930051B4FA /* map.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = map.geojson; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +121,9 @@
 				3054652D1C183B7F00562292 /* LaunchScreen.storyboard */,
 				305465301C183B7F00562292 /* Info.plist */,
 				3054651F1C183B7F00562292 /* Supporting Files */,
+				9CFCC71D1D75FE5E0051B4FA /* GeoJSONSerialization.h */,
+				9CFCC71F1D75FF370051B4FA /* GeoJSONSerialization.m */,
+				9CFCC7211D7602930051B4FA /* map.geojson */,
 			);
 			path = ZLNavigationControllerDemo;
 			sourceTree = "<group>";
@@ -261,6 +269,7 @@
 				305465561C183C1800562292 /* btn_navigation_close@2x.png in Resources */,
 				3054652C1C183B7F00562292 /* Assets.xcassets in Resources */,
 				3054655F1C183C1800562292 /* ZLTestViewController.xib in Resources */,
+				9CFCC7221D7602930051B4FA /* map.geojson in Resources */,
 				305465551C183C1800562292 /* btn_navigation_back@2x.png in Resources */,
 				3054652A1C183B7F00562292 /* Main.storyboard in Resources */,
 				305465571C183C1800562292 /* shadow.png in Resources */,
@@ -276,6 +285,7 @@
 			files = (
 				3054655B1C183C1800562292 /* ZLPopView.m in Sources */,
 				3054655C1C183C1800562292 /* ZLNavTabBarController.m in Sources */,
+				9CFCC7201D75FF370051B4FA /* GeoJSONSerialization.m in Sources */,
 				305465591C183C1800562292 /* ZLChannelView.m in Sources */,
 				305465271C183B7F00562292 /* ViewController.m in Sources */,
 				3054655D1C183C1800562292 /* ZLTableViewController.m in Sources */,

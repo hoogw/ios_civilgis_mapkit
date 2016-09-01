@@ -26,7 +26,7 @@
     
     ZLTableViewController *oneViewController = [[ZLTableViewController alloc] init];
     oneViewController.area = @"city";
-    oneViewController.content = @[@"zoning",@"parcels",@"address",@"streets",@"general_land_use"];
+    oneViewController.content = @[@"zoning",@"parcels",@"address",@"streets",@"general_land_use",@"parks",@"schools",@"law_beat",@"law_district",@"neighbor",@"law_geoproximity",@"law_reportarea",@"fire_district",@"fire_geoproximity",@"fire_agency",@"fire_station_boundary"];
     oneViewController.title = @"city";
     oneViewController.view.backgroundColor = [UIColor clearColor];
     

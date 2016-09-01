@@ -9,15 +9,23 @@
 
 #import "ZLTestViewController.h"
 #import "ZLCommonConst.h"
+#import "GeoJSONSerialization.h"
 
 
-@interface ZLTestViewController ()
 
+
+
+@interface ZLTestViewController ()  <MKMapViewDelegate>
+
+@property (readwrite, nonatomic, strong) MKMapView *mapView;
 //@property (nonatomic, weak) UIView *nightView;
+
+
 
 @end
 
 @implementation ZLTestViewController{
+    
     
     
 
@@ -32,7 +40,6 @@
     // .......... mapkit init ................
     
     MKMapView *mapView = [[MKMapView alloc] initWithFrame:self.view.frame];
-    
     
    // mapView.mapType = MKMapTypeHybrid;
     
@@ -78,7 +85,7 @@
     
     // above Road render tile too slow, above label render tile faster
    // [mapView addOverlay:overlay level: MKOverlayLevelAboveRoads];
-    [mapView addOverlay:overlay level: MKOverlayLevelAboveLabels];
+     [mapView addOverlay:overlay level: MKOverlayLevelAboveLabels];
     
     
     
@@ -132,9 +139,245 @@
     }
     [self.locationManager startUpdatingLocation];
     
+    
+    
+    
+    
+    //---------------- add area boundary -------------
+    
+    
+    
+    
+    NSString *const _url_arealimit = [NSString stringWithFormat:@"http://166.62.80.50:10/gis/api/maparealimit/%@/limit", _area];
+
+    //NSLog(@"URL****: %@", kMessageBoardURLString);
+    
+    
+//    NSURL *msgURL = [NSURL URLWithString:_url_arealimit];
+//    NSURLSession *session = [NSURLSession sharedSession];
+//    
+//    
+//    
+//    
+//    NSURLSessionTask *messageTask = [session dataTaskWithURL:msgURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+//        
+//        
+//        // NSString *retString = [NSString stringWithUTF8String:[data bytes]];
+//        
+//        
+//        // NSLog(@"json returned: %@", retString);
+//        
+//        //
+//        //    NSError *parseError = nil;
+//        //    NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data
+//        //                                                         options:0
+//        //                                                           error:&parseError];
+//        //
+//        //    if (!parseError) {
+//        //        [self setMessageArray:jsonArray];
+//        //        NSLog(@"json array is %@", jsonArray);
+//        //    } else {
+//        //        NSString *err = [parseError localizedDescription];
+//        //        NSLog(@"Encountered error parsing: %@", err);
+//        //    }
+//        
+//        
+//        
+//        NSDictionary *geoJSON = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+//        NSArray *shapes = [GeoJSONSerialization shapesFromGeoJSONFeatureCollection:geoJSON error:nil];
+//        
+//        for (MKShape *shape in shapes) {
+//            if ([shape isKindOfClass:[MKPointAnnotation class]]) {
+//                
+//                [mapView addAnnotation:shape];
+//            } else if ([shape conformsToProtocol:@protocol(MKOverlay)]) {
+//                
+//                [mapView addOverlay:(id <MKOverlay>)shape];
+//                
+//            }
+//        }
+//
+//        
+//        
+//        
+//        
+//    }];
+//    [messageTask resume];
+    
+    
+    [self add_geojson_layer:_url_arealimit  toMap: mapView ];
+    
+    //-------------- end area boundary -------------------
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // first time get geojson
+    
+    NSString * _url_api = [self get_map_bound];
+    
+   // NSLog(@"----- json_api -----: %@", _url_api);
+    
+    [self add_geojson_layer:_url_api toMap: mapView ];
+    
+    
+    
+    
+}// view did load method
+
+
+
+
+
+
+// =============== add geojson layer ===========
+
+- (void) add_geojson_layer:(NSString*)_url toMap:(MKMapView *)mapview_{
 
     
-}
+    
+    NSLog(@"*****  URL  ****: %@", _url);
+    
+    
+    NSURL *msgURL = [NSURL URLWithString:_url];
+    NSURLSession *session = [NSURLSession sharedSession];
+    
+    
+    
+    
+    NSURLSessionTask *messageTask = [session dataTaskWithURL:msgURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        
+        
+        // NSString *retString = [NSString stringWithUTF8String:[data bytes]];
+        
+        
+        // NSLog(@"json returned: %@", retString);
+        
+        //
+        //    NSError *parseError = nil;
+        //    NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data
+        //                                                         options:0
+        //                                                           error:&parseError];
+        //
+        //    if (!parseError) {
+        //        [self setMessageArray:jsonArray];
+        //        NSLog(@"json array is %@", jsonArray);
+        //    } else {
+        //        NSString *err = [parseError localizedDescription];
+        //        NSLog(@"Encountered error parsing: %@", err);
+        //    }
+        
+        
+        
+        NSDictionary *geoJSON = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        NSArray *shapes = [GeoJSONSerialization shapesFromGeoJSONFeatureCollection:geoJSON error:nil];
+        
+        for (MKShape *shape in shapes) {
+            if ([shape isKindOfClass:[MKPointAnnotation class]]) {
+                
+                [mapview_ addAnnotation:shape];
+            } else if ([shape conformsToProtocol:@protocol(MKOverlay)]) {
+                
+                [mapview_ addOverlay:(id <MKOverlay>)shape];
+                
+            }
+        }// for shapes
+        
+
+    
+    }];// message session task
+     [messageTask resume];
+    
+    
+    
+}// add geojson method
+
+
+
+// =========== End add geojson layer ==================
+
+
+
+
+
+
+
+
+
+
+                                     //............. get map bound ................
+                                     
+                                     -(NSString *)get_map_bound
+                                     {
+                                         
+                                         // MKMapRect mRect =  _mapView.visibleMapRect;
+                                         
+                                         MKMapRect mRect = self.mapView.visibleMapRect;
+                                         
+                                         CLLocationCoordinate2D bottomLeft = [self getSWCoordinate:mRect];
+                                         CLLocationCoordinate2D topRight = [self getNECoordinate:mRect];
+                                         
+                                         
+                                         NSNumber *sw_lat = [NSNumber numberWithDouble:bottomLeft.latitude ];
+                                         NSNumber *sw_lng = [NSNumber numberWithDouble:bottomLeft.longitude];
+                                         NSNumber *ne_lat =  [NSNumber numberWithDouble:topRight.latitude];
+                                         NSNumber *ne_lng =[NSNumber numberWithDouble:topRight.longitude];
+                                         
+                                         
+                                         NSString *sw_lat_string = [sw_lat stringValue];
+                                         NSString *sw_lng_string = [sw_lng stringValue];
+                                         NSString *ne_lat_string = [ne_lat stringValue];
+                                         NSString *ne_lng_string = [ne_lng stringValue];
+                                         
+                                         
+                                         // php
+                                         NSString *_url =[NSString stringWithFormat:@"http://166.62.80.50:10/gis/api/loadall_mobile/%@/%@/%@/%@/%@/%@", _area, _subject,sw_lng_string,sw_lat_string,ne_lng_string,ne_lat_string];
+                                         
+                                         // asp.net
+                                         // NSString *_url =[NSString stringWithFormat:@"http://166.62.80.50/api/geojson/feature_mobile/%@/%@/%@/%@/%@/%@", _area, _subject,sw_lng_string,sw_lat_string,ne_lng_string,ne_lat_string];
+                                         
+                                         
+                                         return _url;
+                                         
+                                         
+                                     }
+                                     
+                                     
+                                     
+                                     -(CLLocationCoordinate2D)getNECoordinate:(MKMapRect)mRect{
+                                         return [self getCoordinateFromMapRectanglePoint:MKMapRectGetMaxX(mRect) y:mRect.origin.y];
+                                     }
+                                     -(CLLocationCoordinate2D)getNWCoordinate:(MKMapRect)mRect{
+                                         return [self getCoordinateFromMapRectanglePoint:MKMapRectGetMinX(mRect) y:mRect.origin.y];
+                                     }
+                                     -(CLLocationCoordinate2D)getSECoordinate:(MKMapRect)mRect{
+                                         return [self getCoordinateFromMapRectanglePoint:MKMapRectGetMaxX(mRect) y:MKMapRectGetMaxY(mRect)];
+                                     }
+                                     -(CLLocationCoordinate2D)getSWCoordinate:(MKMapRect)mRect{
+                                         return [self getCoordinateFromMapRectanglePoint:mRect.origin.x y:MKMapRectGetMaxY(mRect)];
+                                     }
+                                     
+                                     
+                                     -(CLLocationCoordinate2D)getCoordinateFromMapRectanglePoint:(double)x y:(double)y{
+                                         MKMapPoint swMapPoint = MKMapPointMake(x, y);
+                                         return MKCoordinateForMapPoint(swMapPoint);
+                                     }
+                                     
+                                     
+                                     
+                                     
+                                     //.............End of  get map bound ................
+
+
+
+
+
 
 
 
@@ -151,31 +394,91 @@
 
 #pragma mark - MKMapViewDelegate
 
-- (MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id <MKOverlay>)overlay
+//- (MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id <MKOverlay>)overlay
+//{
+//    
+//    
+//    
+//    if ([overlay isKindOfClass:[MKTileOverlay class]]) {
+//        
+//        
+//        
+//        return [[MKTileOverlayRenderer alloc] initWithTileOverlay:overlay];
+//    }
+//    
+//    return nil;
+//}
+
+
+#pragma mark - MKMapViewDelegate
+
+- (MKAnnotationView *)mapView:(MKMapView *)mapView
+            viewForAnnotation:(id <MKAnnotation>)annotation
+{
+    static NSString * PinIdentifier = @"Pin";
+    
+    MKAnnotationView *annotationView = [mapView dequeueReusableAnnotationViewWithIdentifier:PinIdentifier];
+    
+    if (!annotationView) {
+        annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:PinIdentifier];
+    };
+    
+    annotationView.hidden = ![annotation isKindOfClass:[MKPointAnnotation class]];
+    
+    return annotationView;
+}
+
+- (MKOverlayRenderer *)mapView:(MKMapView *)mapView
+            rendererForOverlay:(id <MKOverlay>)overlay
 {
     
-    
+    // tile overlay
     
     if ([overlay isKindOfClass:[MKTileOverlay class]]) {
         
         
         
-        return [[MKTileOverlayRenderer alloc] initWithTileOverlay:overlay];
+                return [[MKTileOverlayRenderer alloc] initWithTileOverlay:overlay];
+            }
+    
+    else {
+    
+        
+        
+    // geojson - shape overlay
+        
+    MKOverlayRenderer *renderer = nil;
+        
+     // polyline
+    if ([overlay isKindOfClass:[MKPolyline class]]) {
+        renderer = [[MKPolylineRenderer alloc] initWithPolyline:(MKPolyline *)overlay];
+        ((MKPolylineRenderer *)renderer).strokeColor = [UIColor blackColor];
+        ((MKPolylineRenderer *)renderer).lineWidth = 4.0f;
+        //((MKPolylineRenderer *)renderer).descript
+        
     }
     
-    return nil;
+        // polygon
+    else if ([overlay isKindOfClass:[MKPolygon class]]) {
+        renderer = [[MKPolygonRenderer alloc] initWithPolygon:(MKPolygon *)overlay];
+        ((MKPolygonRenderer *)renderer).strokeColor = [UIColor redColor];
+        ((MKPolygonRenderer *)renderer).fillColor = [UIColor colorWithRed:1.0f green:0.0f blue:0.0f alpha:0.5f];
+        ((MKPolygonRenderer *)renderer).lineWidth = 2.0f;
+    }
+    
+    renderer.alpha = 0.7;
+    
+    return renderer;
+        
+    }// else
+    
 }
 
 
-//-(MKTileOverlayRenderer *)mapView:(MKMapView*)mapView rendererForOverlay:(id<MKOverlay>)overlay {
-//    
-//    
-//    NSLog(@"URL : %@", [overlay canReplaceMapContent]);
-//
-//    
-//    return [[MKTileOverlayRenderer alloc] initWithOverlay:overlay];
-//    
-//}
+
+
+
+
 
 
 
