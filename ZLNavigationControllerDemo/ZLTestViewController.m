@@ -220,7 +220,7 @@
     
     // first time get geojson
     
-    NSString * _url_api = [self get_map_bound];
+    NSString * _url_api = [self get_map_bound:mapView];
     
    // NSLog(@"----- json_api -----: %@", _url_api);
     
@@ -254,10 +254,10 @@
     NSURLSessionTask *messageTask = [session dataTaskWithURL:msgURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         
         
-        // NSString *retString = [NSString stringWithUTF8String:[data bytes]];
+         NSString *retString = [NSString stringWithUTF8String:[data bytes]];
         
         
-        // NSLog(@"json returned: %@", retString);
+         NSLog(@"    #####json#####    : %@", retString);
         
         //
         //    NSError *parseError = nil;
@@ -311,23 +311,37 @@
 
 
 
-                                     //............. get map bound ................
+    //............. get map bound ................
                                      
-                                     -(NSString *)get_map_bound
+-(NSString *)get_map_bound:(MKMapView *)mapview_
                                      {
                                          
-                                         // MKMapRect mRect =  _mapView.visibleMapRect;
-                                         
-                                         MKMapRect mRect = self.mapView.visibleMapRect;
-                                         
-                                         CLLocationCoordinate2D bottomLeft = [self getSWCoordinate:mRect];
-                                         CLLocationCoordinate2D topRight = [self getNECoordinate:mRect];
+                                         MKMapRect mRect = mapview_.visibleMapRect;
                                          
                                          
-                                         NSNumber *sw_lat = [NSNumber numberWithDouble:bottomLeft.latitude ];
-                                         NSNumber *sw_lng = [NSNumber numberWithDouble:bottomLeft.longitude];
-                                         NSNumber *ne_lat =  [NSNumber numberWithDouble:topRight.latitude];
-                                         NSNumber *ne_lng =[NSNumber numberWithDouble:topRight.longitude];
+                                         
+  // 1 way works
+//                                         MKMapPoint neMapPoint = MKMapPointMake(MKMapRectGetMaxX(mRect), mRect.origin.y);
+//                                         MKMapPoint swMapPoint = MKMapPointMake(mRect.origin.x, MKMapRectGetMaxY(mRect));
+//                                         
+//                                         CLLocationCoordinate2D neCoord = MKCoordinateForMapPoint(neMapPoint);
+//                                         CLLocationCoordinate2D swCoord = MKCoordinateForMapPoint(swMapPoint);
+ // end 1 way works
+               
+                                         
+                                         
+                                         
+     // 2 way works
+
+                                         
+                                         CLLocationCoordinate2D  swCoord= [self getSWCoordinate:mRect];
+                                         CLLocationCoordinate2D neCoord = [self getNECoordinate:mRect];
+    // end 2 way works
+                                         
+                                         NSNumber *sw_lat = [NSNumber numberWithDouble:swCoord.latitude ];
+                                         NSNumber *sw_lng = [NSNumber numberWithDouble:swCoord.longitude];
+                                         NSNumber *ne_lat =  [NSNumber numberWithDouble:neCoord.latitude];
+                                         NSNumber *ne_lng =[NSNumber numberWithDouble:neCoord.longitude];
                                          
                                          
                                          NSString *sw_lat_string = [sw_lat stringValue];
