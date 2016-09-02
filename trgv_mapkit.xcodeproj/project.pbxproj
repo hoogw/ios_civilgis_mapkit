@@ -30,6 +30,7 @@
 		9C050DB41D2D5FE300D7240A /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C050DB31D2D5FE300D7240A /* MapKit.framework */; };
 		9CFCC7201D75FF370051B4FA /* GeoJSONSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CFCC71F1D75FF370051B4FA /* GeoJSONSerialization.m */; };
 		9CFCC7221D7602930051B4FA /* map.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 9CFCC7211D7602930051B4FA /* map.geojson */; };
+		9CFCC7251D7A37FA0051B4FA /* UIView+Toast.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CFCC7241D7A37FA0051B4FA /* UIView+Toast.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -72,6 +73,8 @@
 		9CFCC71D1D75FE5E0051B4FA /* GeoJSONSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoJSONSerialization.h; sourceTree = "<group>"; };
 		9CFCC71F1D75FF370051B4FA /* GeoJSONSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoJSONSerialization.m; sourceTree = "<group>"; };
 		9CFCC7211D7602930051B4FA /* map.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = map.geojson; sourceTree = "<group>"; };
+		9CFCC7231D7A37800051B4FA /* UIView+Toast.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+Toast.h"; sourceTree = "<group>"; };
+		9CFCC7241D7A37FA0051B4FA /* UIView+Toast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Toast.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +127,8 @@
 				9CFCC71D1D75FE5E0051B4FA /* GeoJSONSerialization.h */,
 				9CFCC71F1D75FF370051B4FA /* GeoJSONSerialization.m */,
 				9CFCC7211D7602930051B4FA /* map.geojson */,
+				9CFCC7231D7A37800051B4FA /* UIView+Toast.h */,
+				9CFCC7241D7A37FA0051B4FA /* UIView+Toast.m */,
 			);
 			path = ZLNavigationControllerDemo;
 			sourceTree = "<group>";
@@ -286,6 +291,7 @@
 				3054655B1C183C1800562292 /* ZLPopView.m in Sources */,
 				3054655C1C183C1800562292 /* ZLNavTabBarController.m in Sources */,
 				9CFCC7201D75FF370051B4FA /* GeoJSONSerialization.m in Sources */,
+				9CFCC7251D7A37FA0051B4FA /* UIView+Toast.m in Sources */,
 				305465591C183C1800562292 /* ZLChannelView.m in Sources */,
 				305465271C183B7F00562292 /* ViewController.m in Sources */,
 				3054655D1C183C1800562292 /* ZLTableViewController.m in Sources */,

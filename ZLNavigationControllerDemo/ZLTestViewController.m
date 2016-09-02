@@ -10,7 +10,7 @@
 #import "ZLTestViewController.h"
 #import "ZLCommonConst.h"
 #import "GeoJSONSerialization.h"
-
+#import "UIView+Toast.h"
 
 
 
@@ -143,6 +143,33 @@
                 
                  NSLog(@"#### tap ##### found  polygon: %@", @"#### tap ##### found  polygon");
                 
+                CGFloat hue = ( arc4random() % 256 / 256.0 );  //  0.0 to 1.0
+                CGFloat saturation = ( arc4random() % 128 / 256.0 ) + 0.5;  //  0.5 to 1.0, away from white
+                CGFloat brightness = ( arc4random() % 128 / 256.0 ) + 0.5;  //  0.5 to 1.0, away from black
+               UIColor *color = [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1];
+                
+                //UIColor *color = [UIColor yellowColor];
+                //NSLog(@"hue:%f  sat:%f bri:%f", hue,saturation,brightness);
+                
+                
+                MKPolygonRenderer    *renderer =(MKPolygonRenderer*) [mapView rendererForOverlay:overlay];
+
+                renderer.lineWidth = 3.0f;
+                renderer.strokeColor = color;
+                [renderer invalidatePath];
+                
+                
+                
+                
+                // show properties
+                
+                
+                
+                NSLog(@"title......%@", polygon.title);
+               // NSLog(@"description......%@", polygon.description);
+                
+                [mapView makeToast:polygon.title];
+                
                 
                 
                 break;
@@ -184,6 +211,31 @@
         
         NSLog(@"Touched poly: %@\n"
               "    distance: %f", nearestPoly, nearestDistance);
+        
+        
+        
+        CGFloat hue = ( arc4random() % 256 / 256.0 );  //  0.0 to 1.0
+        CGFloat saturation = ( arc4random() % 128 / 256.0 ) + 0.5;  //  0.5 to 1.0, away from white
+        CGFloat brightness = ( arc4random() % 128 / 256.0 ) + 0.5;  //  0.5 to 1.0, away from black
+        UIColor *color = [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1];
+        
+        //UIColor *color = [UIColor yellowColor];
+        //NSLog(@"hue:%f  sat:%f bri:%f", hue,saturation,brightness);
+        
+        
+        MKPolylineRenderer    *renderer =(MKPolylineRenderer*) [mapView rendererForOverlay:nearestPoly];
+        
+        renderer.lineWidth = 4.0f;
+        renderer.strokeColor = color;
+        [renderer invalidatePath];
+        
+        
+        
+        // show properties
+        [mapView makeToast:nearestPoly.title];
+        
+        
+        
     }
     
     
@@ -502,59 +554,7 @@
     
     NSString *const _url_arealimit = [NSString stringWithFormat:@"http://166.62.80.50:10/gis/api/maparealimit/%@/limit", _area];
 
-    //NSLog(@"URL****: %@", kMessageBoardURLString);
-    
-    
-//    NSURL *msgURL = [NSURL URLWithString:_url_arealimit];
-//    NSURLSession *session = [NSURLSession sharedSession];
-//    
-//    
-//    
-//    
-//    NSURLSessionTask *messageTask = [session dataTaskWithURL:msgURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-//        
-//        
-//        // NSString *retString = [NSString stringWithUTF8String:[data bytes]];
-//        
-//        
-//        // NSLog(@"json returned: %@", retString);
-//        
-//        //
-//        //    NSError *parseError = nil;
-//        //    NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data
-//        //                                                         options:0
-//        //                                                           error:&parseError];
-//        //
-//        //    if (!parseError) {
-//        //        [self setMessageArray:jsonArray];
-//        //        NSLog(@"json array is %@", jsonArray);
-//        //    } else {
-//        //        NSString *err = [parseError localizedDescription];
-//        //        NSLog(@"Encountered error parsing: %@", err);
-//        //    }
-//        
-//        
-//        
-//        NSDictionary *geoJSON = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-//        NSArray *shapes = [GeoJSONSerialization shapesFromGeoJSONFeatureCollection:geoJSON error:nil];
-//        
-//        for (MKShape *shape in shapes) {
-//            if ([shape isKindOfClass:[MKPointAnnotation class]]) {
-//                
-//                [mapView addAnnotation:shape];
-//            } else if ([shape conformsToProtocol:@protocol(MKOverlay)]) {
-//                
-//                [mapView addOverlay:(id <MKOverlay>)shape];
-//                
-//            }
-//        }
-//
-//        
-//        
-//        
-//        
-//    }];
-//    [messageTask resume];
+   
     
     
     [self add_geojson_layer:_url_arealimit  toMap: mapView ];
@@ -611,21 +611,19 @@
         
          NSLog(@"    #####json#####    : %@", retString);
         
-        //
-        //    NSError *parseError = nil;
-        //    NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data
-        //                                                         options:0
-        //                                                           error:&parseError];
-        //
-        //    if (!parseError) {
-        //        [self setMessageArray:jsonArray];
-        //        NSLog(@"json array is %@", jsonArray);
-        //    } else {
-        //        NSString *err = [parseError localizedDescription];
-        //        NSLog(@"Encountered error parsing: %@", err);
-        //    }
+        if (retString.length < 20){
+            
+            // return total number
+            
+            // show properties
+            [mapview_ makeToast:retString];
+            
+        }
+            
         
         
+        else{
+        // return geojson
         
         NSDictionary *geoJSON = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
         NSArray *shapes = [GeoJSONSerialization shapesFromGeoJSONFeatureCollection:geoJSON error:nil];
@@ -641,6 +639,7 @@
             }
         }// for shapes
         
+    }//else
 
     
     }];// message session task
@@ -818,7 +817,7 @@
      // polyline
     if ([overlay isKindOfClass:[MKPolyline class]]) {
         renderer = [[MKPolylineRenderer alloc] initWithPolyline:(MKPolyline *)overlay];
-        ((MKPolylineRenderer *)renderer).strokeColor = [UIColor blackColor];
+        ((MKPolylineRenderer *)renderer).strokeColor = [UIColor blueColor];
         ((MKPolylineRenderer *)renderer).lineWidth = 4.0f;
         //((MKPolylineRenderer *)renderer).descript
         
@@ -828,7 +827,7 @@
     else if ([overlay isKindOfClass:[MKPolygon class]]) {
         renderer = [[MKPolygonRenderer alloc] initWithPolygon:(MKPolygon *)overlay];
         ((MKPolygonRenderer *)renderer).strokeColor = [UIColor redColor];
-        ((MKPolygonRenderer *)renderer).fillColor = [UIColor colorWithRed:1.0f green:0.0f blue:0.0f alpha:0.5f];
+        ((MKPolygonRenderer *)renderer).fillColor = [UIColor colorWithRed:1.0f green:0.0f blue:0.0f alpha:0.0f];
         ((MKPolygonRenderer *)renderer).lineWidth = 2.0f;
     }
     

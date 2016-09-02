@@ -66,8 +66,19 @@ static MKPolyline * MKPolylineFromGeoJSONLineStringFeature(NSDictionary *feature
     free(polylineCoordinates);
     
     NSDictionary *properties = [NSDictionary dictionaryWithDictionary:feature[@"properties"]];
-    polyLine.title = properties[@"title"];
-    polyLine.subtitle = properties[@"subtitle"];
+    
+    NSError * err;
+    NSData * jsonData = [NSJSONSerialization  dataWithJSONObject:properties options:0 error:&err];
+    NSString * myString = [[NSString alloc] initWithData:jsonData   encoding:NSUTF8StringEncoding];
+    // NSLog(@"======%@",myString);
+    
+    polyLine.title = myString;
+    
+    
+    
+    
+//    polyLine.title = properties[@"title"];
+//    polyLine.subtitle = properties[@"subtitle"];
     
     return polyLine;
 }
@@ -103,8 +114,18 @@ static MKPolygon * MKPolygonFromGeoJSONPolygonFeature(NSDictionary *feature) {
     }
     
     NSDictionary *properties = [NSDictionary dictionaryWithDictionary:feature[@"properties"]];
-    polygon.title = properties[@"title"];
-    polygon.subtitle = properties[@"subtitle"];
+    
+    
+    NSError * err;
+    NSData * jsonData = [NSJSONSerialization  dataWithJSONObject:properties options:0 error:&err];
+    NSString * myString = [[NSString alloc] initWithData:jsonData   encoding:NSUTF8StringEncoding];
+   // NSLog(@"======%@",myString);
+    
+    polygon.title = myString;
+   // polygon.subtitle = _title;
+    
+//    polygon.title = properties[@"CAD_CODE"];
+//    polygon.subtitle = properties[@"Id"];
     
     return polygon;
 }
