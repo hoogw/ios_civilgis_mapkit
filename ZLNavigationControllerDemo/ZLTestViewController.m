@@ -32,9 +32,320 @@
     
 }
 
+
+//%%%%%%%%%%%%%%%%%  tap %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+- (double)distanceOfPoint:(MKMapPoint)pt toPoly:(MKPolyline *)poly
+{
+    double distance = MAXFLOAT;
+    for (int n = 0; n < poly.pointCount - 1; n++) {
+        
+        MKMapPoint ptA = poly.points[n];
+        MKMapPoint ptB = poly.points[n + 1];
+        
+        double xDelta = ptB.x - ptA.x;
+        double yDelta = ptB.y - ptA.y;
+        
+        if (xDelta == 0.0 && yDelta == 0.0) {
+            
+            // Points must not be equal
+            continue;
+        }
+        
+        double u = ((pt.x - ptA.x) * xDelta + (pt.y - ptA.y) * yDelta) / (xDelta * xDelta + yDelta * yDelta);
+        MKMapPoint ptClosest;
+        if (u < 0.0) {
+            
+            ptClosest = ptA;
+        }
+        else if (u > 1.0) {
+            
+            ptClosest = ptB;
+        }
+        else {
+            
+            ptClosest = MKMapPointMake(ptA.x + u * xDelta, ptA.y + u * yDelta);
+        }
+        
+        distance = MIN(distance, MKMetersBetweenMapPoints(ptClosest, pt));
+    }
+    
+    return distance;
+}
+
+
+
+
+
+#define MAX_DISTANCE_PX 22.0f
+
+
+
+
+
+
+
+
+
+
+-(void)handleMapTap:(UIGestureRecognizer*)tap{
+    
+    MKMapView *mapView = (MKMapView *)tap.view;
+    
+    
+    CGPoint tapPoint = [tap locationInView:mapView];
+    
+    
+    //----- polyline calculate------
+    
+    CGPoint ptB = CGPointMake(tapPoint.x + MAX_DISTANCE_PX, tapPoint.y);
+    
+    CLLocationCoordinate2D coordA = [mapView convertPoint:tapPoint toCoordinateFromView:mapView];
+    CLLocationCoordinate2D coordB = [mapView convertPoint:ptB toCoordinateFromView:mapView];
+
+    double maxMeters = MKMetersBetweenMapPoints(MKMapPointForCoordinate(coordA), MKMapPointForCoordinate(coordB));
+
+    
+    float nearestDistance = MAXFLOAT;
+    MKPolyline *nearestPoly = nil;
+    
+    //  ------ end polyline calculate-----------
+    
+    
+   NSLog(@"tapPoint = %f,%f",tapPoint.x, tapPoint.y);
+    
+    CLLocationCoordinate2D tapCoord = [mapView convertPoint:tapPoint toCoordinateFromView:mapView];
+    MKMapPoint mapPoint = MKMapPointForCoordinate(tapCoord);
+    CGPoint mapPointAsCGP = CGPointMake(mapPoint.x, mapPoint.y);
+    
+    for (id<MKOverlay> overlay in mapView.overlays) {
+        
+        
+        
+        // polygon
+        if([overlay isKindOfClass:[MKPolygon class]]){
+            MKPolygon *polygon = (MKPolygon*) overlay;
+            
+            CGMutablePathRef mpr = CGPathCreateMutable();
+            
+            MKMapPoint *polygonPoints = polygon.points;
+            
+            for (int p=0; p < polygon.pointCount; p++){
+                MKMapPoint mp = polygonPoints[p];
+                if (p == 0)
+                    CGPathMoveToPoint(mpr, NULL, mp.x, mp.y);
+                else
+                    CGPathAddLineToPoint(mpr, NULL, mp.x, mp.y);
+            }
+            
+            if(CGPathContainsPoint(mpr , NULL, mapPointAsCGP, FALSE)){
+                
+                
+                 NSLog(@"#### tap ##### found  polygon: %@", @"#### tap ##### found  polygon");
+                
+                
+                
+                break;
+                
+            }//if
+            
+            CGPathRelease(mpr);
+        }//if
+        
+        
+        
+        
+        if([overlay isKindOfClass:[MKPolyline class]]){
+            // ... get the distance ...
+            float distance = [self distanceOfPoint:MKMapPointForCoordinate(tapCoord)
+                                            toPoly:overlay];
+            
+            // ... and find the nearest one
+            if (distance < nearestDistance) {
+                
+                nearestDistance = distance;
+                nearestPoly = overlay;
+            }
+        
+        }//if
+
+        
+        
+        
+        
+        
+        
+    }// for
+    
+    
+    
+    
+    if (nearestDistance <= maxMeters) {
+        
+        NSLog(@"Touched poly: %@\n"
+              "    distance: %f", nearestPoly, nearestDistance);
+    }
+    
+    
+    
+    
+}// handle map tap method
+
+
+
+// not in use, this is another way
+- (void)mapTapped:(UITapGestureRecognizer *)recognizer
+{
+    
+    MKMapView *mapView = (MKMapView *)recognizer.view;
+    
+    CGPoint tapPoint = [recognizer locationInView:mapView];
+    NSLog(@"tapPoint = %f,%f",tapPoint.x, tapPoint.y);
+    
+    //convert screen CGPoint tapPoint to CLLocationCoordinate2D...
+    CLLocationCoordinate2D tapCoordinate = [mapView convertPoint:tapPoint toCoordinateFromView:mapView];
+    
+    //convert CLLocationCoordinate2D tapCoordinate to MKMapPoint...
+    MKMapPoint point = MKMapPointForCoordinate(tapCoordinate);
+    
+    if (mapView.overlays.count > 0 ) {
+        for (id<MKOverlay> overlay in mapView.overlays)
+        {
+            
+            if ([overlay isKindOfClass:[MKCircle class]])
+            {
+                MKCircle *circle = overlay;
+                MKCircleRenderer *circleRenderer = (MKCircleRenderer *)[mapView rendererForOverlay:circle];
+                
+                //convert MKMapPoint tapMapPoint to point in renderer's context...
+                CGPoint datpoint = [circleRenderer pointForMapPoint:point];
+                [circleRenderer invalidatePath];
+                
+                
+                if (CGPathContainsPoint(circleRenderer.path, nil, datpoint, false)){
+                    
+                    NSLog(@"tapped on overlay");
+                    break;
+                }
+                
+            }
+            
+            
+            if ([overlay isKindOfClass:[MKPolygon class]])
+            {
+                
+                NSLog(@"#### tap polygon #####  : %@", @"22222222222222222222222");
+                
+                
+                
+                
+            }
+            
+            
+            
+            
+            
+            
+            
+        }
+        
+    }
+}//
+
+
+//%%%%%%%%%%%%%%%%% End tap %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
+    
+    
+    
+    
+    
+    
+    
+    //########### init location ##########
+    
+    
+    NSMutableArray *city = [NSMutableArray arrayWithObjects:@"city", @"33.65992448007282", @"-117.91505813598633", @"13", nil];
+    
+    NSMutableArray *county = [NSMutableArray arrayWithObjects:@"county", @"33.693495", @"-117.793350", @"11", nil];
+    
+    NSMutableArray *Newport_Beach = [NSMutableArray arrayWithObjects:@"Newport_Beach", @"33.616478", @"-117.875748", @"13", nil];
+    NSMutableArray *Santa_Monica = [NSMutableArray arrayWithObjects:@"Santa_Monica", @"34.023143", @"-118.475275", @"14", nil];
+    
+    NSMutableArray *Los_Angeles = [NSMutableArray arrayWithObjects:@"Los_Angeles", @"34.043556504127444", @"-118.24928283691406", @"11", nil];
+    NSMutableArray *San_Francisco = [NSMutableArray arrayWithObjects:@"San_Francisco", @"37.77559951996456", @"-122.41722106933594", @"12", nil];
+    NSMutableArray *New_York = [NSMutableArray arrayWithObjects:@"New_York", @"40.753499070431374", @"-73.98948669433594", @"11", nil];
+    NSMutableArray *Chicago = [NSMutableArray arrayWithObjects:@"Chicago", @"41.874673839758024", @"-87.63175964355469", @"11", nil];
+    NSMutableArray *Denver = [NSMutableArray arrayWithObjects:@"Denver", @"39.74336227378035", @"-104.99101638793945", @"12", nil];
+    NSMutableArray *Los_Angeles_County = [NSMutableArray arrayWithObjects:@"Los_Angeles_County", @"34.05607276338366", @"-118.26370239257812", @"10", nil];
+    NSMutableArray *New_York_Bronx = [NSMutableArray arrayWithObjects:@"New_York_Bronx", @"40.85537053192496", @"-73.87687683105469", @"13", nil];
+    NSMutableArray *New_York_Brooklyn = [NSMutableArray arrayWithObjects:@"New_York_Brooklyn", @"40.65433643720422", @"-73.95206451416016", @"13", nil];
+    NSMutableArray *New_York_Manhattan = [NSMutableArray arrayWithObjects:@"New_York_Manhattan", @"40.764421348741976", @"-73.97815704345703", @"13", nil];
+    NSMutableArray *New_York_Queens = [NSMutableArray arrayWithObjects:@"New_York_Queens", @"40.72280306615735", @"-73.79997253417969", @"13", nil];
+    NSMutableArray *New_York_Staten_Island = [NSMutableArray arrayWithObjects:@"New_York_Staten_Island", @"40.60300547512703", @"-74.1353988647461", @"13", nil];
+    NSMutableArray *Arura = [NSMutableArray arrayWithObjects:@"Arura", @"39.723296392333026", @"-104.84081268310547", @"13", nil];
+    NSMutableArray *Bakersfield = [NSMutableArray arrayWithObjects:@"Bakersfield", @"39.818557296839344", @"-104.501953125", @"13", nil];
+    NSMutableArray *Baltimore = [NSMutableArray arrayWithObjects:@"Baltimore", @"35.44808511462123", @"-118.78177642822266", @"13", nil];
+    NSMutableArray *Orlando = [NSMutableArray arrayWithObjects:@"Orlando", @"39.90657598772841", @"-104.59259033203125", @"13", nil];
+    NSMutableArray *Palo_Alto = [NSMutableArray arrayWithObjects:@"Palo_Alto", @"37.4426999532675", @"-122.15492248535156", @"13", nil];
+    NSMutableArray *Philadelphia = [NSMutableArray arrayWithObjects:@"Philadelphia", @"37.49529038649112", @"-122.10411071777344", @"13", nil];
+    NSMutableArray *Portland = [NSMutableArray arrayWithObjects:@"Portland", @"40.13794057716276", @"-74.95491027832031", @"13", nil];
+    NSMutableArray *San_Jose = [NSMutableArray arrayWithObjects:@"San_Jose", @"45.58473142874248", @"-122.46803283691406", @"13", nil];
+    NSMutableArray *Seattle = [NSMutableArray arrayWithObjects:@"Seattle", @"37.45469273789926", @"-121.82052612304688", @"13", nil];
+    NSMutableArray *Shoreline = [NSMutableArray arrayWithObjects:@"Shoreline", @"47.75479043701335", @"-122.34392166137695", @"13", nil];
+    NSMutableArray *Stockton = [NSMutableArray arrayWithObjects:@"Stockton", @"47.77936670249429", @"-122.27182388305664", @"13", nil];
+    NSMutableArray *Washington_DC = [NSMutableArray arrayWithObjects:@"Washington_DC", @"38.063635376296816", @"-121.18932723999023", @"13", nil];
+    
+    
+    
+    NSMutableDictionary *area_info= [[NSMutableDictionary alloc]init];
+    
+    [area_info setObject:city forKey:@"city"];
+    [area_info setObject:county forKey:@"county"];
+    [area_info setObject:Newport_Beach forKey:@"Newport_Beach"];
+    [area_info setObject:Santa_Monica forKey:@"Santa_Monica"];
+    [area_info setObject:Los_Angeles forKey:@"Los_Angeles"];
+    [area_info setObject:San_Francisco forKey:@"San_Francisco"];
+    [area_info setObject:New_York forKey:@"New_York"];
+    [area_info setObject:Chicago forKey:@"Chicago"];
+    [area_info setObject:Denver forKey:@"Denver"];
+    [area_info setObject:Los_Angeles_County forKey:@"Los_Angeles_County"];
+    [area_info setObject:New_York_Bronx forKey:@"New_York_Bronx"];
+    [area_info setObject:New_York_Brooklyn forKey:@"New_York_Brooklyn"];
+    [area_info setObject:New_York_Manhattan forKey:@"New_York_Manhattan"];
+    [area_info setObject:New_York_Queens forKey:@"New_York_Queens"];
+    [area_info setObject:New_York_Staten_Island forKey:@"New_York_Staten_Island"];
+    [area_info setObject:Arura forKey:@"Arura"];
+    [area_info setObject:Bakersfield forKey:@"Bakersfield"];
+    [area_info setObject:Baltimore forKey:@"Baltimore"];
+    [area_info setObject:Orlando forKey:@"Orlando"];
+    [area_info setObject:Palo_Alto forKey:@"Palo_Alto"];
+    [area_info setObject:Philadelphia forKey:@"Philadelphia"];
+    [area_info setObject:Portland forKey:@"Portland"];
+    [area_info setObject:San_Jose forKey:@"San_Jose"];
+    [area_info setObject:Seattle forKey:@"Seattle"];
+    [area_info setObject:Shoreline forKey:@"Shoreline"];
+    [area_info setObject:Stockton forKey:@"Stockton"];
+    [area_info setObject:Washington_DC forKey:@"Washington_DC"];
+    
+    
+    //###############  End  init location ##########
+
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     // .......... mapkit init ................
@@ -57,8 +368,14 @@
 //    
 //    [mapView setRegion:region animated:NO];
     
-     NSString *lat=@"33.6599244";
-     NSString *lng=@"-117.915058135";
+    
+    NSMutableArray *_init_loc = area_info[_area];
+    
+//     NSString *lat=@"33.6599244";
+//     NSString *lng=@"-117.915058135";
+    NSString *lat=[_init_loc objectAtIndex:1];
+    NSString *lng=[_init_loc objectAtIndex:2];
+    
     
     CGFloat latitude = [lat floatValue];
     CGFloat longitude = [lng floatValue];
@@ -90,8 +407,43 @@
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    // --------   add tap gesture ----------
+    
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleMapTap:)];
+    tap.cancelsTouchesInView = NO;
+    tap.numberOfTapsRequired = 1;
+    
+    UITapGestureRecognizer *tap2 = [[UITapGestureRecognizer alloc] init];
+    tap2.cancelsTouchesInView = NO;
+    tap2.numberOfTapsRequired = 2;
+    
+//    [mapView addGestureRecognizer:tap2];
+    [mapView addGestureRecognizer:tap];
+//    [tap requireGestureRecognizerToFail:tap2]; // Ignore single tap if the user actually double taps
+    
+    
+    // Not in use, this is another way
+  //  [mapView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(mapTapped:)]];
+    
+    // --------- End tap gesture ---------------
+    
+    
+    
+    
+    
+    
     self.view = mapView;
     //[self.view addSubview:mapView];
+    
+    
     
     
     
@@ -487,7 +839,6 @@
     }// else
     
 }
-
 
 
 
