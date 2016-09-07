@@ -49,8 +49,18 @@ static MKPointAnnotation * MKPointAnnotationFromGeoJSONPointFeature(NSDictionary
     pointAnnotation.coordinate = CLLocationCoordinateFromCoordinates(geometry[@"coordinates"]);
     
     NSDictionary *properties = [NSDictionary dictionaryWithDictionary:feature[@"properties"]];
-    pointAnnotation.title = properties[@"title"];
-    pointAnnotation.subtitle = properties[@"subtitle"];
+    
+    
+    NSError * err;
+    NSData * jsonData = [NSJSONSerialization  dataWithJSONObject:properties options:0 error:&err];
+    NSString * myString = [[NSString alloc] initWithData:jsonData   encoding:NSUTF8StringEncoding];
+    
+    pointAnnotation.title = myString;
+    
+    pointAnnotation.subtitle = myString;
+    
+//    pointAnnotation.title = properties[@"title"];
+//    pointAnnotation.subtitle = properties[@"subtitle"];
     
     return pointAnnotation;
 }

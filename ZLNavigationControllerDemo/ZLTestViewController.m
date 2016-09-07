@@ -21,7 +21,6 @@
 //@property (nonatomic, weak) UIView *nightView;
 
 
-
 @end
 
 @implementation ZLTestViewController{
@@ -118,7 +117,7 @@
     MKMapPoint mapPoint = MKMapPointForCoordinate(tapCoord);
     CGPoint mapPointAsCGP = CGPointMake(mapPoint.x, mapPoint.y);
     
-    for (id<MKOverlay> overlay in mapView.overlays) {
+    for (id<MKOverlay> overlay in [mapView.overlays copy]) {
         
         
         
@@ -126,6 +125,8 @@
         if([overlay isKindOfClass:[MKPolygon class]]){
             MKPolygon *polygon = (MKPolygon*) overlay;
             
+            
+                        
             CGMutablePathRef mpr = CGPathCreateMutable();
             
             MKMapPoint *polygonPoints = polygon.points;
@@ -169,12 +170,14 @@
                // NSLog(@"description......%@", polygon.description);
                 
                 [mapView makeToast:polygon.title];
-                
+        
                 
                 
                 break;
                 
             }//if
+            
+            
             
             CGPathRelease(mpr);
         }//if
@@ -324,36 +327,36 @@
     //########### init location ##########
     
     
-    NSMutableArray *city = [NSMutableArray arrayWithObjects:@"city", @"33.65992448007282", @"-117.91505813598633", @"13", nil];
+    NSArray *city = [NSArray arrayWithObjects:@"city", @"33.65992448007282", @"-117.91505813598633", @"13", nil];
     
-    NSMutableArray *county = [NSMutableArray arrayWithObjects:@"county", @"33.693495", @"-117.793350", @"11", nil];
+    NSArray *county = [NSArray arrayWithObjects:@"county", @"33.693495", @"-117.793350", @"11", nil];
     
-    NSMutableArray *Newport_Beach = [NSMutableArray arrayWithObjects:@"Newport_Beach", @"33.616478", @"-117.875748", @"13", nil];
-    NSMutableArray *Santa_Monica = [NSMutableArray arrayWithObjects:@"Santa_Monica", @"34.023143", @"-118.475275", @"14", nil];
+    NSArray *Newport_Beach = [NSArray arrayWithObjects:@"Newport_Beach", @"33.616478", @"-117.875748", @"13", nil];
+    NSArray *Santa_Monica = [NSArray arrayWithObjects:@"Santa_Monica", @"34.023143", @"-118.475275", @"14", nil];
     
-    NSMutableArray *Los_Angeles = [NSMutableArray arrayWithObjects:@"Los_Angeles", @"34.043556504127444", @"-118.24928283691406", @"11", nil];
-    NSMutableArray *San_Francisco = [NSMutableArray arrayWithObjects:@"San_Francisco", @"37.77559951996456", @"-122.41722106933594", @"12", nil];
-    NSMutableArray *New_York = [NSMutableArray arrayWithObjects:@"New_York", @"40.753499070431374", @"-73.98948669433594", @"11", nil];
-    NSMutableArray *Chicago = [NSMutableArray arrayWithObjects:@"Chicago", @"41.874673839758024", @"-87.63175964355469", @"11", nil];
-    NSMutableArray *Denver = [NSMutableArray arrayWithObjects:@"Denver", @"39.74336227378035", @"-104.99101638793945", @"12", nil];
-    NSMutableArray *Los_Angeles_County = [NSMutableArray arrayWithObjects:@"Los_Angeles_County", @"34.05607276338366", @"-118.26370239257812", @"10", nil];
-    NSMutableArray *New_York_Bronx = [NSMutableArray arrayWithObjects:@"New_York_Bronx", @"40.85537053192496", @"-73.87687683105469", @"13", nil];
-    NSMutableArray *New_York_Brooklyn = [NSMutableArray arrayWithObjects:@"New_York_Brooklyn", @"40.65433643720422", @"-73.95206451416016", @"13", nil];
-    NSMutableArray *New_York_Manhattan = [NSMutableArray arrayWithObjects:@"New_York_Manhattan", @"40.764421348741976", @"-73.97815704345703", @"13", nil];
-    NSMutableArray *New_York_Queens = [NSMutableArray arrayWithObjects:@"New_York_Queens", @"40.72280306615735", @"-73.79997253417969", @"13", nil];
-    NSMutableArray *New_York_Staten_Island = [NSMutableArray arrayWithObjects:@"New_York_Staten_Island", @"40.60300547512703", @"-74.1353988647461", @"13", nil];
-    NSMutableArray *Arura = [NSMutableArray arrayWithObjects:@"Arura", @"39.723296392333026", @"-104.84081268310547", @"13", nil];
-    NSMutableArray *Bakersfield = [NSMutableArray arrayWithObjects:@"Bakersfield", @"39.818557296839344", @"-104.501953125", @"13", nil];
-    NSMutableArray *Baltimore = [NSMutableArray arrayWithObjects:@"Baltimore", @"35.44808511462123", @"-118.78177642822266", @"13", nil];
-    NSMutableArray *Orlando = [NSMutableArray arrayWithObjects:@"Orlando", @"39.90657598772841", @"-104.59259033203125", @"13", nil];
-    NSMutableArray *Palo_Alto = [NSMutableArray arrayWithObjects:@"Palo_Alto", @"37.4426999532675", @"-122.15492248535156", @"13", nil];
-    NSMutableArray *Philadelphia = [NSMutableArray arrayWithObjects:@"Philadelphia", @"37.49529038649112", @"-122.10411071777344", @"13", nil];
-    NSMutableArray *Portland = [NSMutableArray arrayWithObjects:@"Portland", @"40.13794057716276", @"-74.95491027832031", @"13", nil];
-    NSMutableArray *San_Jose = [NSMutableArray arrayWithObjects:@"San_Jose", @"45.58473142874248", @"-122.46803283691406", @"13", nil];
-    NSMutableArray *Seattle = [NSMutableArray arrayWithObjects:@"Seattle", @"37.45469273789926", @"-121.82052612304688", @"13", nil];
-    NSMutableArray *Shoreline = [NSMutableArray arrayWithObjects:@"Shoreline", @"47.75479043701335", @"-122.34392166137695", @"13", nil];
-    NSMutableArray *Stockton = [NSMutableArray arrayWithObjects:@"Stockton", @"47.77936670249429", @"-122.27182388305664", @"13", nil];
-    NSMutableArray *Washington_DC = [NSMutableArray arrayWithObjects:@"Washington_DC", @"38.063635376296816", @"-121.18932723999023", @"13", nil];
+    NSArray *Los_Angeles = [NSArray arrayWithObjects:@"Los_Angeles", @"34.043556504127444", @"-118.24928283691406", @"11", nil];
+    NSArray *San_Francisco = [NSArray arrayWithObjects:@"San_Francisco", @"37.77559951996456", @"-122.41722106933594", @"12", nil];
+    NSArray *New_York = [NSArray arrayWithObjects:@"New_York", @"40.753499070431374", @"-73.98948669433594", @"11", nil];
+    NSArray *Chicago = [NSArray arrayWithObjects:@"Chicago", @"41.874673839758024", @"-87.63175964355469", @"11", nil];
+    NSArray *Denver = [NSArray arrayWithObjects:@"Denver", @"39.74336227378035", @"-104.99101638793945", @"12", nil];
+    NSArray *Los_Angeles_County = [NSArray arrayWithObjects:@"Los_Angeles_County", @"34.05607276338366", @"-118.26370239257812", @"10", nil];
+    NSArray *New_York_Bronx = [NSArray arrayWithObjects:@"New_York_Bronx", @"40.85537053192496", @"-73.87687683105469", @"13", nil];
+    NSArray *New_York_Brooklyn = [NSArray arrayWithObjects:@"New_York_Brooklyn", @"40.65433643720422", @"-73.95206451416016", @"13", nil];
+    NSArray *New_York_Manhattan = [NSArray arrayWithObjects:@"New_York_Manhattan", @"40.764421348741976", @"-73.97815704345703", @"13", nil];
+    NSArray *New_York_Queens = [NSArray arrayWithObjects:@"New_York_Queens", @"40.72280306615735", @"-73.79997253417969", @"13", nil];
+    NSArray *New_York_Staten_Island = [NSArray arrayWithObjects:@"New_York_Staten_Island", @"40.60300547512703", @"-74.1353988647461", @"13", nil];
+    NSArray *Arura = [NSArray arrayWithObjects:@"Arura", @"39.723296392333026", @"-104.84081268310547", @"13", nil];
+    NSArray *Bakersfield = [NSArray arrayWithObjects:@"Bakersfield", @"39.818557296839344", @"-104.501953125", @"13", nil];
+    NSArray *Baltimore = [NSArray arrayWithObjects:@"Baltimore", @"35.44808511462123", @"-118.78177642822266", @"13", nil];
+    NSArray *Orlando = [NSArray arrayWithObjects:@"Orlando", @"39.90657598772841", @"-104.59259033203125", @"13", nil];
+    NSArray *Palo_Alto = [NSArray arrayWithObjects:@"Palo_Alto", @"37.4426999532675", @"-122.15492248535156", @"13", nil];
+    NSArray *Philadelphia = [NSArray arrayWithObjects:@"Philadelphia", @"37.49529038649112", @"-122.10411071777344", @"13", nil];
+    NSArray *Portland = [NSArray arrayWithObjects:@"Portland", @"40.13794057716276", @"-74.95491027832031", @"13", nil];
+    NSArray *San_Jose = [NSArray arrayWithObjects:@"San_Jose", @"45.58473142874248", @"-122.46803283691406", @"13", nil];
+    NSArray *Seattle = [NSArray arrayWithObjects:@"Seattle", @"37.45469273789926", @"-121.82052612304688", @"13", nil];
+    NSArray *Shoreline = [NSArray arrayWithObjects:@"Shoreline", @"47.75479043701335", @"-122.34392166137695", @"13", nil];
+    NSArray *Stockton = [NSArray arrayWithObjects:@"Stockton", @"47.77936670249429", @"-122.27182388305664", @"13", nil];
+    NSArray *Washington_DC = [NSArray arrayWithObjects:@"Washington_DC", @"38.063635376296816", @"-121.18932723999023", @"13", nil];
     
     
     
@@ -386,6 +389,15 @@
     [area_info setObject:Shoreline forKey:@"Shoreline"];
     [area_info setObject:Stockton forKey:@"Stockton"];
     [area_info setObject:Washington_DC forKey:@"Washington_DC"];
+    
+    
+    
+     //....... tile list .........
+    
+    
+    NSArray *tileList = [NSArray arrayWithObjects:@"city_address",@"city_general_land_use",@"city_parcels",@"city_streets",@"city_zoning",@"Santa_Monica_Buildings",@"Santa_Monica_Parcels",@"Santa_Monica_Speed_Limit",@"Santa_Monica_Street_Sweeping",@"Santa_Monica_Streets",@"Santa_Monica_Zoning",@"Newport_Beach_Address",@"Newport_Beach_General_Land_Use",@"Newport_Beach_Parcels",@"Newport_Beach_Right_Of_Way",@"Newport_Beach_Streets",@"Newport_Beach_Zoning",@"county_parks",@"county_streets",@"county_address",@"Palo_Alto_Addresses",@"Palo_Alto_Building",@"Palo_Alto_Parcels",@"Palo_Alto_Right_of_way",@"Palo_Alto_Streets",@"Palo_Alto_Zoning",@"Shoreline_Address_Central",@"Shoreline_Buildings",@"Shoreline_Crosswalk_Driveways",@"Shoreline_Curb",@"Shoreline_Curb_Ramp",@"Shoreline_Encumbrance",@"Shoreline_Land_Use_Comp_Plan",@"Shoreline_Pavement",@"Shoreline_Pavement_Condition",@"Shoreline_Sidewalk",@"Shoreline_Street",@"Shoreline_Street_Light",@"Shoreline_Tax_Parcel_Central",@"Shoreline_Traffic_Pave_Striping",@"Shoreline_Zoning",@"New_York_Address",@"New_York_Building",@"New_York_Building_Demolition",@"New_York_Commercial_Zone",@"New_York_Manhattan_Zoning",@"New_York_Parks",@"New_York_Sidewalk",@"New_York_Streets",@"New_York_Zone_Districts",@"Chicago_Bike_Routes",@"Chicago_Buildings",@"Chicago_Curbs",@"Chicago_Major_Streets",@"Chicago_Parks",@"Chicago_Schools",@"Chicago_Streets_Sweeping",@"Chicago_Zoning",@"San_Francisco_Height_And_Bulk_Districts",@"San_Francisco_Parcels",@"San_Francisco_Streets",@"San_Francisco_Zoning_Districts",@"San_Francisco_Address",@"San_Francisco_Blocks",@"San_Francisco_Building_Footprint",@"San_Francisco_Curb_Island",@"San_Francisco_Downtown_Address",@"San_Francisco_Downtown_Land_Use",@"San_Francisco_Downtown_Zoning",@"Los_Angeles_County_Parcels",@"Los_Angeles_General_Land_Use",@"Los_Angeles_Zoning",
+        
+    nil];
     
     
     //###############  End  init location ##########
@@ -421,7 +433,7 @@
 //    [mapView setRegion:region animated:NO];
     
     
-    NSMutableArray *_init_loc = area_info[_area];
+    NSArray *_init_loc = area_info[_area];
     
 //     NSString *lat=@"33.6599244";
 //     NSString *lng=@"-117.915058135";
@@ -442,6 +454,31 @@
     [mapView setRegion:region animated:YES];
    
     
+        // .......... add tiles .........
+
+//    Boolean _add_tile = NO;
+//    
+//   for (id element in tileList)
+//   {
+//       NSString *element_str = (NSString *)element;
+//       NSString *_area_subject = [NSString stringWithFormat:@"%@_%@",_area, _subject];
+//       
+//       if ([element_str isEqualToString:_area_subject]){
+//    
+//           
+//           _add_tile = YES;
+//    
+//           
+//            NSLog(@"addtile^^^^^^^: %@", @"YESSSSSSSSSSSSSSSSSSS" );
+//            break;
+//           
+//       }
+//    
+//   }// for
+//
+//    if (_add_tile){
+    
+
     
     NSString *tile_url = [NSString stringWithFormat:@"http://tile.transparentgov.net/v2/%@_%@/{z}/{x}/{y}.png", _area, _subject];
     
@@ -453,15 +490,13 @@
     
     
     // above Road render tile too slow, above label render tile faster
-   // [mapView addOverlay:overlay level: MKOverlayLevelAboveRoads];
-     [mapView addOverlay:overlay level: MKOverlayLevelAboveLabels];
+    // [mapView addOverlay:overlay level: MKOverlayLevelAboveRoads];
+    [mapView addOverlay:overlay level: MKOverlayLevelAboveLabels];
+
+   // }// if add tile
     
     
-    
-    
-    
-    
-    
+    //........... End add tiles ................
     
     
     
@@ -477,9 +512,9 @@
     tap2.cancelsTouchesInView = NO;
     tap2.numberOfTapsRequired = 2;
     
-//    [mapView addGestureRecognizer:tap2];
+    [mapView addGestureRecognizer:tap2];
     [mapView addGestureRecognizer:tap];
-//    [tap requireGestureRecognizerToFail:tap2]; // Ignore single tap if the user actually double taps
+   // [tap requireGestureRecognizerToFail:tap2]; // Ignore single tap if the user actually double taps
     
     
     // Not in use, this is another way
@@ -554,6 +589,7 @@
     
     NSString *const _url_arealimit = [NSString stringWithFormat:@"http://166.62.80.50:10/gis/api/maparealimit/%@/limit", _area];
 
+    // _url_arealimit = [NSString stringWithFormat:@"http://166.62.80.50:10/gis/api/maparealimit/%@/limit", _area];
    
     
     
@@ -572,16 +608,51 @@
     
     // first time get geojson
     
-    NSString * _url_api = [self get_map_bound:mapView];
+   // NSString * _url_api = [self get_map_bound:mapView];
     
    // NSLog(@"----- json_api -----: %@", _url_api);
     
-    [self add_geojson_layer:_url_api toMap: mapView ];
+    //[self add_geojson_layer:_url_api toMap: mapView ];
     
     
     
     
 }// view did load method
+
+
+
+//+++++++++ mapview stop changing stop moving idle event ++++++++
+
+//- (void)mapViewDidFinishRenderingMap:(MKMapView *)mapView
+//                       fullyRendered:(BOOL)fullyRendered{
+//    
+//    
+//    NSString * _url_api = [self get_map_bound:mapView];
+//    
+//    // NSLog(@"----- json_api -----: %@", _url_api);
+//    
+//    [self add_geojson_layer:_url_api toMap: mapView ];
+//    
+//    
+//}
+
+
+- (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated
+{
+    NSString * _url_api = [self get_map_bound:mapView];
+    
+    // NSLog(@"----- json_api -----: %@", _url_api);
+    
+    [self add_geojson_layer:_url_api toMap: mapView ];
+
+    
+}
+
+//+++++++++End of  mapview stop changing stop moving idle event ++++++++
+
+
+
+
 
 
 
@@ -615,8 +686,16 @@
             
             // return total number
             
-            // show properties
-            [mapview_ makeToast:retString];
+            // show properties, bug, this will modify layout engine outside of main thread.
+          //  [mapview_ makeToast:retString];
+            
+            
+            // ::::clear old last time geojson overlay
+//            NSArray *pointsarray = [mapview_ overlays];
+//            [mapview_ removeOverlay:pointsarray];
+
+            // ::::End clear old last time geojson overlay
+            
             
         }
             
@@ -624,24 +703,48 @@
         
         else{
         // return geojson
+            
+            
+            
+           
+                
+                
+                
+                // ::::clear old last time geojson overlay
+//                            NSArray *pointsarray = [mapview_ overlays];
+//                            [mapview_ removeOverlay:[pointsarray copy]];
+                
+                // ::::End clear old last time geojson overlay
+                
+                
         
         NSDictionary *geoJSON = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
         NSArray *shapes = [GeoJSONSerialization shapesFromGeoJSONFeatureCollection:geoJSON error:nil];
         
-        for (MKShape *shape in shapes) {
+        for (MKShape *shape in [shapes copy]) {
             if ([shape isKindOfClass:[MKPointAnnotation class]]) {
                 
                 [mapview_ addAnnotation:shape];
             } else if ([shape conformsToProtocol:@protocol(MKOverlay)]) {
                 
+                 @try{
                 [mapview_ addOverlay:(id <MKOverlay>)shape];
+                 }//try
+                
+                @catch (NSException *geex){
+                    
+                    NSLog(@"error------ %@ ", geex);
+                    
+                }
                 
             }
         }// for shapes
         
-    }//else
-
     
+            
+       
+
+      }//else
     }];// message session task
      [messageTask resume];
     
@@ -782,16 +885,48 @@
 {
     static NSString * PinIdentifier = @"Pin";
     
+    
+    
+    
     MKAnnotationView *annotationView = [mapView dequeueReusableAnnotationViewWithIdentifier:PinIdentifier];
     
     if (!annotationView) {
         annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:PinIdentifier];
-    };
+        annotationView.canShowCallout = YES;
+        
+        annotationView.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+        
+        
+        //your code
+        
+//        UIView *vw = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+//        //vw.backgroundColor = [UIColor redColor];
+//        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(5, 5, 500, 500)];
+//        label.numberOfLines = 4;
+//        label.text = annotation.title;
+//        [vw addSubview:label];
+//        annotationView.leftCalloutAccessoryView = vw;
+        
+        
+    }
+    else {
+        annotationView.annotation = annotation;
+    }
     
-    annotationView.hidden = ![annotation isKindOfClass:[MKPointAnnotation class]];
+   // annotationView.hidden = ![annotation isKindOfClass:[MKPointAnnotation class]];
+    
     
     return annotationView;
 }
+
+
+
+
+
+
+
+
+
 
 - (MKOverlayRenderer *)mapView:(MKMapView *)mapView
             rendererForOverlay:(id <MKOverlay>)overlay
@@ -808,7 +943,7 @@
     
     else {
     
-        
+        @try{
         
     // geojson - shape overlay
         
@@ -831,9 +966,23 @@
         ((MKPolygonRenderer *)renderer).lineWidth = 2.0f;
     }
     
-    renderer.alpha = 0.7;
+    renderer.alpha = 0.5;
     
     return renderer;
+            
+            
+            
+            
+            
+        }//try
+        
+        @catch (NSException *geex){
+            
+            NSLog(@"error------ %@ ", geex);
+            
+        }
+
+        
         
     }// else
     
