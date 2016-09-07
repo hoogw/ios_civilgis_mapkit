@@ -417,7 +417,7 @@
 				INFOPLIST_FILE = ZLNavigationControllerDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.trgv.mapkit;
+				PRODUCT_BUNDLE_IDENTIFIER = net.transparentgov.ios.mapkit;
 				PRODUCT_NAME = trgv_mapkit;
 			};
 			name = Debug;
@@ -431,7 +431,7 @@
 				INFOPLIST_FILE = ZLNavigationControllerDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.trgv.mapkit;
+				PRODUCT_BUNDLE_IDENTIFIER = net.transparentgov.ios.mapkit;
 				PRODUCT_NAME = trgv_mapkit;
 			};
 			name = Release;

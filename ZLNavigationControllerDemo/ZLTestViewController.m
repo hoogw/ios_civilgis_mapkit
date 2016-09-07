@@ -479,10 +479,10 @@
 //    if (_add_tile){
     
 
+    // not in use, use real ip, domain cause no tiles shows
+    //NSString *tile_url = [NSString stringWithFormat:@"http://tile.transparentgov.net/v2/%@_%@/{z}/{x}/{y}.png", _area, _subject];
     
-    NSString *tile_url = [NSString stringWithFormat:@"http://tile.transparentgov.net/v2/%@_%@/{z}/{x}/{y}.png", _area, _subject];
-    
-    
+    NSString *tile_url = [NSString stringWithFormat:@"http://166.62.80.50:8887/v2/%@_%@/{z}/{x}/{y}.png", _area, _subject];
     
     MKTileOverlay *overlay = [[MKTileOverlay alloc] initWithURLTemplate: tile_url];
     
