@@ -117,7 +117,7 @@
     navTabBarController.mainViewBounces = YES;
     navTabBarController.selectedToIndex = 10;
     navTabBarController.unchangedToIndex = 2;
-    navTabBarController.showArrayButton = YES;
+    navTabBarController.showArrayButton = NO;
     [navTabBarController addParentController:self];
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
     
