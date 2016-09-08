@@ -112,12 +112,12 @@
     
     
     ZLNavTabBarController *navTabBarController = [[ZLNavTabBarController alloc] init];
-    navTabBarController.subViewControllers = @[oneViewController, twoViewController, threeViewController, fourViewController, fiveViewController, sixViewController, sevenViewController, eightViewController, nightViewController];
+    navTabBarController.subViewControllers = @[oneViewController, twoViewController, threeViewController, fourViewController, fiveViewController, sixViewController, sevenViewController, eightViewController, nightViewController,tenViewController];
     navTabBarController.navTabBarColor = [UIColor clearColor];
     navTabBarController.mainViewBounces = YES;
-    navTabBarController.selectedToIndex = 5;
+    navTabBarController.selectedToIndex = 10;
     navTabBarController.unchangedToIndex = 2;
-    navTabBarController.showArrayButton = NO;
+    navTabBarController.showArrayButton = YES;
     [navTabBarController addParentController:self];
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
     
