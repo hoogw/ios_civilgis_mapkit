@@ -34,7 +34,7 @@
     
     ZLTableViewController *twoViewController = [[ZLTableViewController alloc] init];
     twoViewController.area = @"Santa_Monica";
-    twoViewController.content = @[@"Zoning",@"Bike_Route",@"Parcels",@"Streets",@"Buildings",@"SpeedLimit", @"Streets_Sweeping"];
+    twoViewController.content = @[@"Zoning",@"Bike_Route",@"Parcels",@"Streets",@"Buildings",@"Speed_Limit", @"Streets_Sweeping"];
     twoViewController.title = @"Santa_Monica";
     twoViewController.view.backgroundColor = [UIColor clearColor];
     
@@ -43,7 +43,7 @@
     
     ZLTableViewController *threeViewController = [[ZLTableViewController alloc] init];
     threeViewController.area = @"Palo_Alto";
-    threeViewController.content = @[@"Zoning",@"Address",@"Parcels",@"Streets",@"Building",@"PAN_Areas",@"Right_of_way"];
+    threeViewController.content = @[@"Zoning",@"Addresses",@"Parcels",@"Streets",@"Building",@"PAN_Areas",@"Right_of_way"];
     threeViewController.title = @"Palo_Alto";
     threeViewController.view.backgroundColor = [UIColor clearColor];
     

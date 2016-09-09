@@ -416,7 +416,7 @@
     
     MKMapView *mapView = [[MKMapView alloc] initWithFrame:self.view.frame];
     
-   // mapView.mapType = MKMapTypeHybrid;
+    mapView.mapType = MKMapTypeHybrid;
     
     mapView.showsUserLocation = YES;
     
