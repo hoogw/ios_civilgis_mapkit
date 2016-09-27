@@ -169,9 +169,27 @@
                 NSLog(@"title......%@", polygon.title);
                // NSLog(@"description......%@", polygon.description);
                 
-                [mapView makeToast:polygon.title];
-        
+                [mapView makeToast:polygon.title
+                          duration:2.0
+                          position:CSToastPositionBottom
+                             title:@""
+                             image:[UIImage imageNamed:@"toast.png"]
+                             style:nil
+                        completion:^(BOOL didTap) {
+                            if (didTap) {
+                                // NSLog(@"completion from tap");
+                            } else {
+                                // NSLog(@"completion without tap");
+                            }
+                        }
+                 
+                 ];
                 
+                // toggle "tap to dismiss" functionality
+                [CSToastManager setTapToDismissEnabled:YES];
+                
+                // toggle queueing behavior
+                [CSToastManager setQueueEnabled:YES];
                 
                 break;
                 
@@ -235,7 +253,27 @@
         
         
         // show properties
-        [mapView makeToast:nearestPoly.title];
+        [mapView makeToast:nearestPoly.title
+                  duration:2.0
+                  position:CSToastPositionBottom
+                     title:@""
+                     image:[UIImage imageNamed:@"toast.png"]
+                     style:nil
+                completion:^(BOOL didTap) {
+                    if (didTap) {
+                        // NSLog(@"completion from tap");
+                    } else {
+                        // NSLog(@"completion without tap");
+                    }
+                }
+         
+         ];
+        
+        // toggle "tap to dismiss" functionality
+        [CSToastManager setTapToDismissEnabled:YES];
+        
+        // toggle queueing behavior
+        [CSToastManager setQueueEnabled:YES];
         
         
         
@@ -416,7 +454,7 @@
     
     MKMapView *mapView = [[MKMapView alloc] initWithFrame:self.view.frame];
     
-    mapView.mapType = MKMapTypeHybrid;
+   // mapView.mapType = MKMapTypeHybrid;
     
     mapView.showsUserLocation = YES;
     
