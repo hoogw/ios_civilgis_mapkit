@@ -19,7 +19,16 @@
 @property (strong, nonatomic) NSString *subject;
 @property (strong, nonatomic) NSString *area;
 
-//@property (strong, nonatomic) MKMapView *mapView_;
+//@property (readwrite, nonatomic, strong) MKMapView *mapView;
+@property (strong, nonatomic) MKMapView *mapView;
 //@property (strong, nonatomic) MKTileOverlay *layer;
+
+
+@property (strong, nonatomic) NSArray *shapes;
+@property (strong, nonatomic) NSArray *last_shapes;
+@property (strong, nonatomic) NSString *shapes_type;
+
+@property (strong, nonatomic) MKPointAnnotation *highlighted_pin;
+
 
 @end

@@ -17,7 +17,7 @@
 
 @interface ZLTestViewController ()  <MKMapViewDelegate>
 
-@property (readwrite, nonatomic, strong) MKMapView *mapView;
+
 //@property (nonatomic, weak) UIView *nightView;
 
 
@@ -452,13 +452,13 @@
     
     // .......... mapkit init ................
     
-    MKMapView *mapView = [[MKMapView alloc] initWithFrame:self.view.frame];
+    _mapView = [[MKMapView alloc] initWithFrame:self.view.frame];
     
-   // mapView.mapType = MKMapTypeHybrid;
+   // _mapView.mapType = MKMapTypeHybrid;
     
-    mapView.showsUserLocation = YES;
+    _mapView.showsUserLocation = YES;
     
-    mapView.delegate = self;
+    _mapView.delegate = self;
     
     
 //    MKUserLocation *userLocation = mapView.userLocation;
@@ -468,7 +468,7 @@
 //                                        userLocation.location.coordinate, 20000, 20000);
 //    
 //    
-//    [mapView setRegion:region animated:NO];
+//    [_mapView setRegion:region animated:NO];
     
     
     NSArray *_init_loc = area_info[_area];
@@ -488,8 +488,8 @@
     MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(center_coord, 20000, 20000);
     
     
-   // [mapView setCenterCoordinate:center_coord animated:YES];
-    [mapView setRegion:region animated:YES];
+   // [_mapView setCenterCoordinate:center_coord animated:YES];
+    [_mapView setRegion:region animated:YES];
    
     
         // .......... add tiles .........
@@ -528,8 +528,8 @@
     
     
     // above Road render tile too slow, above label render tile faster
-    // [mapView addOverlay:overlay level: MKOverlayLevelAboveRoads];
-    [mapView addOverlay:overlay level: MKOverlayLevelAboveLabels];
+    // [_mapView addOverlay:overlay level: MKOverlayLevelAboveRoads];
+    [_mapView addOverlay:overlay level: MKOverlayLevelAboveLabels];
 
     //}// if add tile
     
@@ -550,8 +550,8 @@
     tap2.cancelsTouchesInView = NO;
     tap2.numberOfTapsRequired = 2;
     
-    [mapView addGestureRecognizer:tap2];
-    [mapView addGestureRecognizer:tap];
+    [_mapView addGestureRecognizer:tap2];
+    [_mapView addGestureRecognizer:tap];
    // [tap requireGestureRecognizerToFail:tap2]; // Ignore single tap if the user actually double taps
     
     
@@ -565,7 +565,7 @@
     
     
     
-    self.view = mapView;
+    self.view = _mapView;
     //[self.view addSubview:mapView];
     
     
@@ -631,7 +631,7 @@
    
     
     
-    [self add_geojson_layer:_url_arealimit  toMap: mapView ];
+    [self add_geojson_layer:_url_arealimit  toMap: _mapView ];
     
     //-------------- end area boundary -------------------
     
@@ -725,15 +725,38 @@
             // return total number
             
             // show properties, bug, this will modify layout engine outside of main thread.
-          //  [mapview_ makeToast:retString];
+           /* [mapview_ makeToast:retString
+                      duration:1.0
+                       position:CSToastPositionBottom
+                          title:@"zoom in"
+                          image:[UIImage imageNamed:@"toast.png"]
+                          style:nil
+                     completion:^(BOOL didTap) {
+                         if (didTap) {
+                            NSLog(@"completion from tap");
+                         } else {
+                             NSLog(@"completion without tap");
+                         }
+                    }];
+            */
             
             
+            
+            /*
             // ::::clear old last time geojson overlay
-//            NSArray *pointsarray = [mapview_ overlays];
-//            [mapview_ removeOverlay:pointsarray];
+            if (_last_shapes){
+                
+                if ([_shapes_type isEqualToString:@"annotation"]){
+                    [mapview_ removeAnnotations:_last_shapes];
+                }
+                else if ([_shapes_type isEqualToString:@"overlay"]){
+                    [mapview_ removeOverlays:_last_shapes];
+                }
+                
+            }
 
             // ::::End clear old last time geojson overlay
-            
+            */
             
         }
             
@@ -743,45 +766,69 @@
         // return geojson
             
             
-            
-           
-                
-                
-                
-                // ::::clear old last time geojson overlay
-//                            NSArray *pointsarray = [mapview_ overlays];
-//                            [mapview_ removeOverlay:[pointsarray copy]];
-                
-                // ::::End clear old last time geojson overlay
-                
-                
         
         NSDictionary *geoJSON = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-        NSArray *shapes = [GeoJSONSerialization shapesFromGeoJSONFeatureCollection:geoJSON error:nil];
+        _shapes = [GeoJSONSerialization shapesFromGeoJSONFeatureCollection:geoJSON error:nil];
         
-        for (MKShape *shape in [shapes copy]) {
-            if ([shape isKindOfClass:[MKPointAnnotation class]]) {
+        
+            
+            id first_shape = [_shapes objectAtIndex:0];
+            
+            if ([first_shape isKindOfClass:[MKPointAnnotation class]]) {
                 
-                [mapview_ addAnnotation:shape];
-            } else if ([shape conformsToProtocol:@protocol(MKOverlay)]) {
+                [mapview_ addAnnotations:[_shapes copy]];
+                //_shapes_type = @"annotation";
                 
-                 @try{
-                [mapview_ addOverlay:(id <MKOverlay>)shape];
-                 }//try
+            }
+            
+            else if ([first_shape conformsToProtocol:@protocol(MKOverlay)]){
+                [mapview_ addOverlays:[_shapes copy]];
+                //_shapes_type = @"overlay";
+
                 
-                @catch (NSException *geex){
-                    
-                    NSLog(@"error------ %@ ", geex);
-                    
+            }
+            
+//        for (MKShape *shape in _shapes) {
+//            if ([shape isKindOfClass:[MKPointAnnotation class]]) {
+//                
+//                [mapview_ addAnnotation:shape];
+//            } else if ([shape conformsToProtocol:@protocol(MKOverlay)]) {
+//                
+//                 @try{
+//                [mapview_ addOverlay:(id <MKOverlay>)shape];
+//                 }//try
+//                
+//                @catch (NSException *geex){
+//                    
+//                    NSLog(@"error------ %@ ", geex);
+//                    
+//                }
+//                
+//            }
+//        }// for shapes
+            
+            
+           /*
+            // ::::clear old last time geojson overlay
+            
+            if (_last_shapes){
+                
+                if ([_shapes_type isEqualToString:@"annotation"]){
+                    [mapview_ removeAnnotations:_last_shapes];
+                }
+                else if ([_shapes_type isEqualToString:@"overlay"]){
+                    [mapview_ removeOverlays:_last_shapes];
                 }
                 
             }
-        }// for shapes
-        
-    
             
-       
-
+            // ::::End clear old last time geojson overlay
+            
+           */
+            
+            _last_shapes = [_shapes copy];
+            
+            
       }//else
     }];// message session task
      [messageTask resume];
@@ -921,30 +968,37 @@
 - (MKAnnotationView *)mapView:(MKMapView *)mapView
             viewForAnnotation:(id <MKAnnotation>)annotation
 {
+    
+    
+    if ([annotation isKindOfClass:[MKUserLocation class]]) {
+        return nil;  // use default user location view
+    }
+    
+    
+    UIColor *pin_color = [UIColor greenColor];
+    BOOL showcallout = NO;
+    
+    /*
+    NSString *pin_title = [annotation title];
+    if ([pin_title isEqualToString:@"highlight_pin"]){
+        
+        showcallout = YES;
+        
+        pin_color = [UIColor purpleColor];
+        
+    }
+    */
+    
+    
     static NSString * PinIdentifier = @"Pin";
     
-    
-    
-    
-    MKAnnotationView *annotationView = [mapView dequeueReusableAnnotationViewWithIdentifier:PinIdentifier];
+        MKAnnotationView *annotationView = [mapView dequeueReusableAnnotationViewWithIdentifier:PinIdentifier];
     
     if (!annotationView) {
         annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:PinIdentifier];
-        annotationView.canShowCallout = YES;
-        
-        annotationView.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
-        
-        
-        //your code
-        
-//        UIView *vw = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
-//        //vw.backgroundColor = [UIColor redColor];
-//        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(5, 5, 500, 500)];
-//        label.numberOfLines = 4;
-//        label.text = annotation.title;
-//        [vw addSubview:label];
-//        annotationView.leftCalloutAccessoryView = vw;
-        
+        annotationView.canShowCallout = showcallout;
+        annotationView.tintColor = pin_color;
+        //annotationView.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
         
     }
     else {
@@ -955,10 +1009,70 @@
     
     
     return annotationView;
+    
+    
+}// method
+
+
+
+// tap on pin event, this annotation is selected.
+- (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view
+{
+    
+    MKPointAnnotation *selected_pin = view.annotation;
+    
+    /*
+    
+    CGFloat hue = ( arc4random() % 256 / 256.0 );  //  0.0 to 1.0
+    CGFloat saturation = ( arc4random() % 128 / 256.0 ) + 0.5;  //  0.5 to 1.0, away from white
+    CGFloat brightness = ( arc4random() % 128 / 256.0 ) + 0.5;  //  0.5 to 1.0, away from black
+    UIColor *color = [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1];
+    
+    view.tintColor = color;
+     */
+    
+    
+    // add a highlight marker at selected pin
+   /*
+    if(!_highlighted_pin){
+    _highlighted_pin = [[MKPointAnnotation alloc]init];
+        _highlighted_pin.title = @"highlight_pin";
+        _highlighted_pin.coordinate = selected_pin.coordinate;
+
+        [mapView addAnnotation:_highlighted_pin];
+
+    }
+    else {
+    
+    _highlighted_pin.coordinate = selected_pin.coordinate;
+    }
+    
+    */
+    
+    // show properties
+    [mapView makeToast:selected_pin.title
+              duration:2.0
+              position:CSToastPositionBottom
+                 title:@""
+                 image:[UIImage imageNamed:@"toast.png"]
+                 style:nil
+            completion:^(BOOL didTap) {
+                if (didTap) {
+                    // NSLog(@"completion from tap");
+                } else {
+                    // NSLog(@"completion without tap");
+                }
+            }
+     
+     ];
+    
+    // toggle "tap to dismiss" functionality
+    [CSToastManager setTapToDismissEnabled:YES];
+    
+    // toggle queueing behavior
+    [CSToastManager setQueueEnabled:YES];
+    
 }
-
-
-
 
 
 
