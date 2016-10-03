@@ -1,10 +1,3 @@
-//
-//  ZLTestViewController.m
-//  CustomNavigationController
-//
-//  Created by zhaoliang on 15/11/12.
-//  Copyright © 2015年 zhao. All rights reserved.
-//
 
 
 #import "ZLTestViewController.h"
@@ -89,6 +82,12 @@
 
 -(void)handleMapTap:(UIGestureRecognizer*)tap{
     
+    
+    
+    NSLog(@"tap event fire :-- %@", @"TTTTTTttttttaaaaaaaaaaaappppppppppppa");
+    
+    
+    
     MKMapView *mapView = (MKMapView *)tap.view;
     
     
@@ -156,7 +155,8 @@
                 MKPolygonRenderer    *renderer =(MKPolygonRenderer*) [mapView rendererForOverlay:overlay];
 
                 renderer.lineWidth = 3.0f;
-                renderer.strokeColor = color;
+                //renderer.strokeColor = color;
+                renderer.fillColor = color;
                 [renderer invalidatePath];
                 
                 
@@ -191,8 +191,8 @@
                 // toggle queueing behavior
                 [CSToastManager setQueueEnabled:YES];
                 
-                break;
                 
+               break;
             }//if
             
             
@@ -246,7 +246,7 @@
         
         MKPolylineRenderer    *renderer =(MKPolylineRenderer*) [mapView rendererForOverlay:nearestPoly];
         
-        renderer.lineWidth = 4.0f;
+        renderer.lineWidth = 10.0f;
         renderer.strokeColor = color;
         [renderer invalidatePath];
         
@@ -489,8 +489,8 @@
     
     
    // [_mapView setCenterCoordinate:center_coord animated:YES];
-    [_mapView setRegion:region animated:YES];
-   
+   // [_mapView setRegion:region animated:YES];
+   [_mapView setRegion:region animated:NO];
     
         // .......... add tiles .........
 
@@ -543,14 +543,16 @@
     
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleMapTap:)];
-    tap.cancelsTouchesInView = NO;
+   // tap.cancelsTouchesInView = NO;
     tap.numberOfTapsRequired = 1;
-    
+   
+    /*
     UITapGestureRecognizer *tap2 = [[UITapGestureRecognizer alloc] init];
     tap2.cancelsTouchesInView = NO;
     tap2.numberOfTapsRequired = 2;
-    
-    [_mapView addGestureRecognizer:tap2];
+    */
+     
+   // [_mapView addGestureRecognizer:tap2];
     [_mapView addGestureRecognizer:tap];
    // [tap requireGestureRecognizerToFail:tap2]; // Ignore single tap if the user actually double taps
     
@@ -622,7 +624,7 @@
     
     //---------------- add area boundary -------------
     
-    
+    _last_shapes = [[NSArray alloc] init];
     
     
     NSString *const _url_arealimit = [NSString stringWithFormat:@"http://166.62.80.50:10/gis/api/maparealimit/%@/limit", _area];
@@ -679,7 +681,7 @@
 {
     NSString * _url_api = [self get_map_bound:mapView];
     
-    // NSLog(@"----- json_api -----: %@", _url_api);
+     NSLog(@"view change %@", @"********* ######################  ******************");
     
     [self add_geojson_layer:_url_api toMap: mapView ];
 
@@ -742,21 +744,31 @@
             
             
             
-            /*
+            
             // ::::clear old last time geojson overlay
-            if (_last_shapes){
+            if (!((_last_shapes == nil) ||([_last_shapes count] == 0))){
                 
                 if ([_shapes_type isEqualToString:@"annotation"]){
-                    [mapview_ removeAnnotations:_last_shapes];
+                    
+                    NSLog(@"%@", @"remove all pin..................");
+                    
+                    [mapview_ removeAnnotations:[_last_shapes copy]];
+                    
+                    
+                    
                 }
                 else if ([_shapes_type isEqualToString:@"overlay"]){
-                    [mapview_ removeOverlays:_last_shapes];
-                }
+                    [mapview_ removeOverlays:[_last_shapes copy]];
+                    
+                    }
+                
+                _last_shapes = nil;
+
                 
             }
 
             // ::::End clear old last time geojson overlay
-            */
+            
             
         }
             
@@ -766,8 +778,32 @@
         // return geojson
             
             
+            
+            // ::::clear old last time geojson overlay
+            
+            if (!((_last_shapes == nil) ||([_last_shapes count] == 0))){
+                
+                if ([_shapes_type isEqualToString:@"annotation"]){
+                    [mapview_ removeAnnotations:[_last_shapes copy]];
+                }
+                else if ([_shapes_type isEqualToString:@"overlay"]){
+                    [mapview_ removeOverlays:[_last_shapes copy]];
+                }
+                
+               _last_shapes = nil;
+                
+            }
+            
+            // ::::End clear old last time geojson overlay
+
+            
+            
+            
+            
+            
         
         NSDictionary *geoJSON = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        _shapes = [[NSArray alloc] init];
         _shapes = [GeoJSONSerialization shapesFromGeoJSONFeatureCollection:geoJSON error:nil];
         
         
@@ -777,57 +813,31 @@
             if ([first_shape isKindOfClass:[MKPointAnnotation class]]) {
                 
                 [mapview_ addAnnotations:[_shapes copy]];
-                //_shapes_type = @"annotation";
+                _shapes_type = @"annotation";
                 
             }
             
             else if ([first_shape conformsToProtocol:@protocol(MKOverlay)]){
-                [mapview_ addOverlays:[_shapes copy]];
-                //_shapes_type = @"overlay";
+                
+                
+                
+                [mapview_ addOverlays:[_shapes copy] level:MKOverlayLevelAboveLabels];
+                _shapes_type = @"overlay";
 
+                NSLog(@"add shapes - %@", @"aaaaaaadddddddddd");
                 
             }
             
-//        for (MKShape *shape in _shapes) {
-//            if ([shape isKindOfClass:[MKPointAnnotation class]]) {
-//                
-//                [mapview_ addAnnotation:shape];
-//            } else if ([shape conformsToProtocol:@protocol(MKOverlay)]) {
-//                
-//                 @try{
-//                [mapview_ addOverlay:(id <MKOverlay>)shape];
-//                 }//try
-//                
-//                @catch (NSException *geex){
-//                    
-//                    NSLog(@"error------ %@ ", geex);
-//                    
-//                }
-//                
-//            }
-//        }// for shapes
+
             
-            
-           /*
-            // ::::clear old last time geojson overlay
-            
-            if (_last_shapes){
-                
-                if ([_shapes_type isEqualToString:@"annotation"]){
-                    [mapview_ removeAnnotations:_last_shapes];
-                }
-                else if ([_shapes_type isEqualToString:@"overlay"]){
-                    [mapview_ removeOverlays:_last_shapes];
-                }
+            if ([_url containsString:@"maparealimit"]){
                 
             }
+            else {
             
-            // ::::End clear old last time geojson overlay
-            
-           */
-            
-            _last_shapes = [_shapes copy];
-            
+            _last_shapes = _shapes;
+                
+            }
             
       }//else
     }];// message session task
@@ -1007,6 +1017,7 @@
     
    // annotationView.hidden = ![annotation isKindOfClass:[MKPointAnnotation class]];
     
+    NSLog(@"--- pin -- %@", @"pppppppppiiiiiiiiiiinnnnnnnnnnn");
     
     return annotationView;
     
@@ -1088,7 +1099,7 @@
     
     if ([overlay isKindOfClass:[MKTileOverlay class]]) {
         
-        
+        NSLog(@"add tile -- %@",@"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         
                 return [[MKTileOverlayRenderer alloc] initWithTileOverlay:overlay];
             }
@@ -1096,6 +1107,14 @@
     else {
     
         @try{
+            
+            
+            
+            
+            
+            
+            
+            
         
     // geojson - shape overlay
         
@@ -1119,6 +1138,8 @@
     }
     
     renderer.alpha = 0.5;
+            
+         NSLog(@"render - %@ ", @"=====================");   
     
     return renderer;
             
